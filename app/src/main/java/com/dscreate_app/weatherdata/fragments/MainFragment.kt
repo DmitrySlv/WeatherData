@@ -9,9 +9,12 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.dscreate_app.weatherdata.R
+import com.dscreate_app.weatherdata.adapters.VpAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
 import com.dscreate_app.weatherdata.utils.isPermissionGranted
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
 
@@ -20,6 +23,14 @@ class MainFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentMainBinding is null")
 
     private lateinit var permLauncher: ActivityResultLauncher<String>
+    private val fList = listOf(
+        HoursFragment.newInstance(),
+        DaysFragment.newInstance()
+    )
+    private val tabList = listOf(
+        HOURS,
+        DAYS
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +43,15 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
+        init()
+    }
+
+    private fun init() = with(binding) {
+        val vpAdapter = VpAdapter(activity as FragmentActivity, fList)
+        viewPager.adapter = vpAdapter
+        TabLayoutMediator(tabLayout, viewPager) {
+            tab, position -> tab.text = tabList[position]
+        }.attach()
     }
 
     private fun permissionListener() {
@@ -48,6 +68,9 @@ class MainFragment : Fragment() {
     }
 
     companion object {
+
+        private const val HOURS = "Почасовой прогноз"
+        private const val DAYS = "Прогноз на день"
 
         @JvmStatic
         fun newInstance() = MainFragment()
