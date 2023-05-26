@@ -1,6 +1,6 @@
 package com.dscreate_app.weatherdata.models
 
-data class DayItemModel(
+data class DayItemModelDto(
     val region: String,
     val city: String,
     val date: String,
