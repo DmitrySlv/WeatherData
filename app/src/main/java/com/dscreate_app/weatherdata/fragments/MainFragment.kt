@@ -2,6 +2,7 @@ package com.dscreate_app.weatherdata.fragments
 
 import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.adapters.VpAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
@@ -44,6 +48,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
         init()
+        requestWeatherData("Tolyatti")
     }
 
     private fun init() = with(binding) {
@@ -67,10 +72,36 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun requestWeatherData(city: String) {
+        val url = "https://api.weatherapi.com/v1/forecast.json?key=" +
+                API_KEY +
+                "&q=" +
+                city +
+                "&days=" +
+                "3" +
+                "&aqi=no&alerts=no"
+        val queue = Volley.newRequestQueue(context)
+        val request = StringRequest(
+            Request.Method.GET,
+            url,
+            {
+                result ->
+                Log.d("MyLog", "result: $result")
+            },
+            {
+                error ->
+                Log.d("MyLog", "error: $error")
+            }
+        )
+        queue.add(request)
+    }
+
     companion object {
 
         private const val HOURS = "Почасовой прогноз"
         private const val DAYS = "Прогноз на день"
+        private const val BASE_URL = ""
+        private const val API_KEY = "788394c0eb1c4e5b8e1183129221805"
 
         @JvmStatic
         fun newInstance() = MainFragment()
