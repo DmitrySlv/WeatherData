@@ -17,8 +17,10 @@ import com.android.volley.toolbox.Volley
 import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.adapters.VpAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
+import com.dscreate_app.weatherdata.models.WeatherModel
 import com.dscreate_app.weatherdata.utils.isPermissionGranted
 import com.google.android.material.tabs.TabLayoutMediator
+import org.json.JSONObject
 
 class MainFragment : Fragment() {
 
@@ -86,7 +88,7 @@ class MainFragment : Fragment() {
             url,
             {
                 result ->
-                Log.d("MyLog", "result: $result")
+                parseWeatherData(result)
             },
             {
                 error ->
@@ -94,6 +96,25 @@ class MainFragment : Fragment() {
             }
         )
         queue.add(request)
+    }
+
+    private fun parseWeatherData(result: String) {
+        val mainObject = JSONObject(result)
+        val item = WeatherModel(
+            mainObject.getJSONObject("location").getString("name"),
+            mainObject.getJSONObject("current").getString("last_updated"),
+            mainObject.getJSONObject("current").getJSONObject("condition")
+                .getString("text"),
+            mainObject.getJSONObject("current").getString("temp_c"),
+            "",
+            "",
+            mainObject.getJSONObject("current").getJSONObject("condition")
+                .getString("icon"),
+            ""
+        )
+        Log.d("MyLog", "City: ${item.city}, " +
+                "Temp: ${item.currentTemp}," +
+                " Time: ${item.time}")
     }
 
     companion object {
