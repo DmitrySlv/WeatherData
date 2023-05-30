@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.adapters.WeatherAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentDaysBinding
+import com.dscreate_app.weatherdata.models.WeatherModel
 import com.dscreate_app.weatherdata.view_models.MainViewModel
 
-class DaysFragment : Fragment() {
+class DaysFragment : Fragment(), WeatherAdapter.Listener {
 
     private var _binding: FragmentDaysBinding? = null
     private val binding: FragmentDaysBinding
@@ -41,7 +42,7 @@ class DaysFragment : Fragment() {
 
     private fun init() = with(binding) {
         rcDays.layoutManager = LinearLayoutManager(requireContext())
-        weatherAdapter = WeatherAdapter()
+        weatherAdapter = WeatherAdapter(this@DaysFragment)
         rcDays.adapter = weatherAdapter
     }
 
@@ -55,5 +56,9 @@ class DaysFragment : Fragment() {
 
         @JvmStatic
         fun newInstance() = DaysFragment()
+    }
+
+    override fun onClick(item: WeatherModel) {
+        mainViewModel.updateCurrentData(item)
     }
 }

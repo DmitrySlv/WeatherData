@@ -63,8 +63,8 @@ class MainFragment : Fragment() {
             tvDate.text = it.time
             tvCity.text = it.city
             tvCondition.text = it.condition
-            tvCurrentTemp.text = it.currentTemp
-            tvMaxMinTemp.text = maxMinTemp
+            tvCurrentTemp.text = it.currentTemp.ifEmpty { maxMinTemp }
+            tvMaxMinTemp.text = if (it.currentTemp.isEmpty()) "" else maxMinTemp
             Picasso.get().load(HTTPS_URL_IMAGE + it.imageUrl).into(imWeather)
         }
     }
@@ -148,8 +148,8 @@ class MainFragment : Fragment() {
                 day.getString("date"),
                 day.getJSONObject("day").getJSONObject("condition").getString("text"),
                 "",
-                day.getJSONObject("day").getString("maxtemp_c"),
-                day.getJSONObject("day").getString("mintemp_c"),
+                day.getJSONObject("day").getString("maxtemp_c").toFloat().toInt().toString(),
+                day.getJSONObject("day").getString("mintemp_c").toFloat().toInt().toString(),
                 day.getJSONObject("day").getJSONObject("condition").getString("icon"),
                 day.getJSONArray("hour").toString()
             )
@@ -164,7 +164,6 @@ class MainFragment : Fragment() {
         private const val HOURS = "Почасовой прогноз"
         private const val DAYS = "Прогноз на день"
         private const val HTTPS_URL_IMAGE = "https:"
-        private const val BASE_URL = ""
         private const val API_KEY = "788394c0eb1c4e5b8e1183129221805"
 
         @JvmStatic
