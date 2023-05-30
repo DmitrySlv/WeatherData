@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.databinding.ListItemBinding
 import com.dscreate_app.weatherdata.models.WeatherModel
+import com.squareup.picasso.Picasso
 
 class WeatherAdapter: ListAdapter<WeatherModel, WeatherAdapter.Holder>(DiffWeatherAdapter) {
 
@@ -28,6 +29,7 @@ class WeatherAdapter: ListAdapter<WeatherModel, WeatherAdapter.Holder>(DiffWeath
             tvDate.text = weatherModel.time
             tvCondition.text = weatherModel.condition
             tvTemp.text = weatherModel.currentTemp
+            Picasso.get().load("https:" + weatherModel.imageUrl).into(imView)
         }
     }
 }
