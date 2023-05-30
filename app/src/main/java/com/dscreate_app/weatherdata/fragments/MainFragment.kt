@@ -155,6 +155,7 @@ class MainFragment : Fragment() {
             )
             list.add(item)
         }
+        mainViewModel.updateDataList(list)
         return list
     }
 

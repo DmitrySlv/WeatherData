@@ -20,4 +20,8 @@ class MainViewModel: ViewModel() {
         _liveDataCurrent.value = weatherModel
     }
 
+    fun updateDataList(list: List<WeatherModel>) {
+        _liveDataList.value = list
+    }
+
 }

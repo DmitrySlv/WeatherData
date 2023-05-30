@@ -28,7 +28,9 @@ class WeatherAdapter: ListAdapter<WeatherModel, WeatherAdapter.Holder>(DiffWeath
         fun setData(weatherModel: WeatherModel) = with(binding) {
             tvDate.text = weatherModel.time
             tvCondition.text = weatherModel.condition
-            tvTemp.text = weatherModel.currentTemp
+            tvTemp.text = weatherModel.currentTemp.ifEmpty {
+                "${weatherModel.maxTemp}°C / ${weatherModel.minTemp}°C"
+            }
             Picasso.get().load("https:" + weatherModel.imageUrl).into(imView)
         }
     }
