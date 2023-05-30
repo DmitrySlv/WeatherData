@@ -11,15 +11,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.adapters.VpAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
 import com.dscreate_app.weatherdata.models.WeatherModel
 import com.dscreate_app.weatherdata.utils.isPermissionGranted
+import com.dscreate_app.weatherdata.view_models.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
 class MainFragment : Fragment() {
@@ -29,6 +31,7 @@ class MainFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentMainBinding is null")
 
     private lateinit var permLauncher: ActivityResultLauncher<String>
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val fList = listOf(
         HoursFragment.newInstance(),
         DaysFragment.newInstance()
@@ -51,6 +54,19 @@ class MainFragment : Fragment() {
         checkPermission()
         init()
         requestWeatherData("Tolyatti")
+        updateCurrentCard()
+    }
+
+    private fun updateCurrentCard() = with(binding) {
+        mainViewModel.liveDataCurrent.observe(viewLifecycleOwner) {
+            val maxMinTemp = "${it.maxTemp}°C / ${it.minTemp}°C"
+            tvDate.text = it.time
+            tvCity.text = it.city
+            tvCondition.text = it.condition
+            tvCurrentTemp.text = it.currentTemp
+            tvMaxMinTemp.text = maxMinTemp
+            Picasso.get().load(HTTPS_URL_IMAGE + it.imageUrl).into(imWeather)
+        }
     }
 
     private fun init() = with(binding) {
@@ -117,9 +133,8 @@ class MainFragment : Fragment() {
                 .getString("icon"),
             weatherItem.hours
         )
-        Log.d("MyLog", "City: ${item.maxTemp}, " +
-                "Temp: ${item.minTemp}," +
-                " Time: ${item.hours}")
+        mainViewModel.updateCurrentData(item)
+        Log.d("myLog", item.imageUrl)
     }
 
     private fun parseDays(mainObject: JSONObject): List<WeatherModel> {
@@ -147,6 +162,7 @@ class MainFragment : Fragment() {
 
         private const val HOURS = "Почасовой прогноз"
         private const val DAYS = "Прогноз на день"
+        private const val HTTPS_URL_IMAGE = "https:"
         private const val BASE_URL = ""
         private const val API_KEY = "788394c0eb1c4e5b8e1183129221805"
 

@@ -15,4 +15,9 @@ class MainViewModel: ViewModel() {
     val liveDataList: LiveData<List<WeatherModel>>
         get() = _liveDataList
 
+
+     fun updateCurrentData(weatherModel: WeatherModel) {
+        _liveDataCurrent.value = weatherModel
+    }
+
 }
