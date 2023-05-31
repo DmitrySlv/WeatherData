@@ -1,8 +1,12 @@
 package com.dscreate_app.weatherdata.fragments
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +24,10 @@ import com.android.volley.toolbox.Volley
 import com.dscreate_app.weatherdata.adapters.VpAdapter
 import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
 import com.dscreate_app.weatherdata.models.WeatherModel
+import com.dscreate_app.weatherdata.utils.DialogManager
 import com.dscreate_app.weatherdata.utils.isPermissionGranted
 import com.dscreate_app.weatherdata.view_models.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -64,7 +68,11 @@ class MainFragment : Fragment() {
         init()
         requestWeatherData("Tolyatti")
         updateCurrentCard()
-        getLocation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLocation()
     }
 
     private fun updateCurrentCard() = with(binding) {
@@ -88,8 +96,25 @@ class MainFragment : Fragment() {
         }.attach()
         ibSync.setOnClickListener {
             tabLayout.selectTab(tabLayout.getTabAt(0)) //переключает на нужный там по позиции из tablayout
-            getLocation()
+            checkLocation()
         }
+    }
+
+    private fun checkLocation() {
+        if (isLocationEnabled()) {
+            getLocation()
+        } else {
+            DialogManager.locSettingsDialog(requireContext(), object : DialogManager.Listener {
+                override fun onClick() {
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            })
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun getLocation() {
