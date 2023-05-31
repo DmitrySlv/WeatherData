@@ -1,6 +1,7 @@
 package com.dscreate_app.weatherdata.fragments
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
@@ -20,6 +22,11 @@ import com.dscreate_app.weatherdata.databinding.FragmentMainBinding
 import com.dscreate_app.weatherdata.models.WeatherModel
 import com.dscreate_app.weatherdata.utils.isPermissionGranted
 import com.dscreate_app.weatherdata.view_models.MainViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
@@ -41,6 +48,8 @@ class MainFragment : Fragment() {
         DAYS
     )
 
+    private lateinit var fLocationClient: FusedLocationProviderClient
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,6 +64,7 @@ class MainFragment : Fragment() {
         init()
         requestWeatherData("Tolyatti")
         updateCurrentCard()
+        getLocation()
     }
 
     private fun updateCurrentCard() = with(binding) {
@@ -70,11 +80,35 @@ class MainFragment : Fragment() {
     }
 
     private fun init() = with(binding) {
+        fLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         val vpAdapter = VpAdapter(activity as FragmentActivity, fList)
         viewPager.adapter = vpAdapter
         TabLayoutMediator(tabLayout, viewPager) {
             tab, position -> tab.text = tabList[position]
         }.attach()
+        ibSync.setOnClickListener {
+            tabLayout.selectTab(tabLayout.getTabAt(0)) //переключает на нужный там по позиции из tablayout
+            getLocation()
+        }
+    }
+
+    private fun getLocation() {
+        val cancellationToken = CancellationTokenSource()
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fLocationClient
+            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationToken.token)
+            .addOnCompleteListener {
+                requestWeatherData("${it.result.latitude}, ${it.result.longitude}")
+            }
     }
 
     private fun permissionListener() {
