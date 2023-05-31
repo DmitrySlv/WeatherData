@@ -98,6 +98,14 @@ class MainFragment : Fragment() {
             tabLayout.selectTab(tabLayout.getTabAt(0)) //переключает на нужный там по позиции из tablayout
             checkLocation()
         }
+        ibSearch.setOnClickListener {
+            DialogManager.searchByNameDialog(requireContext(), object: DialogManager.Listener {
+
+                override fun onClick(name: String?) {
+                    name?.let { requestWeatherData(name) }
+                }
+            })
+        }
     }
 
     private fun checkLocation() {
@@ -105,7 +113,7 @@ class MainFragment : Fragment() {
             getLocation()
         } else {
             DialogManager.locSettingsDialog(requireContext(), object : DialogManager.Listener {
-                override fun onClick() {
+                override fun onClick(name: String?) {
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
             })
