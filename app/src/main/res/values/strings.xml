@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">WeatherData</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="item">item</string>
+    <string name="empty">Empty</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="city_name">Название города:</string>
+    <string name="dialog_title">Включить определение местоположения?</string>
+    <string name="dialog_message">Определение вашего местоположения выкл.
+        Вы хотите вкл GPS вашего устройства?""</string>
+    <string name="gps_annotation">Gps вашего устройства выкл.
+        Пожалуйста, вкл GPS и попробуйте еще раз!</string>
+
+    <string name="image_bg_desc">Фон</string>
+    <string name="image_weather_desc">Погода</string>
+    <string name="button_search_desc">Поиск по городу</string>
+    <string name="button_refresh_desc">Обновить данные</string>
+    <string name="days_desc">Погода по дням</string>
+    <string name="hours_desc">Погода по часам</string>
 </resources>

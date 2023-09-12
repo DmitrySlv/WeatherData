@@ -1,7 +1,8 @@
-package com.dscreate_app.weatherdata
+package com.dscreate_app.weatherdata.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.dscreate_app.weatherdata.R
 import com.dscreate_app.weatherdata.databinding.ActivityMainBinding
 import com.dscreate_app.weatherdata.fragments.MainFragment
 
@@ -15,5 +16,9 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, MainFragment.newInstance())
             .commit()
+    }
+
+    companion object {
+        private const val TAG = "MyLog"
     }
 }
